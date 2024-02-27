@@ -162,7 +162,7 @@ selfchaind q bank balances $(selfchaind keys show Cüzdanismi -a)
 
 >  `details` "" içine istediğiniz bir şey yazabilirsiniz. 
 ```
-selfchaind tx checkpointing create-validator \
+selfchaind tx staking create-validator \
 --amount=1000000000uself \
 --pubkey=$(selfchaind tendermint show-validator) \
 --moniker=MonikerName \
