@@ -39,7 +39,7 @@ source $HOME/.profile
 go version
 ```
 
-**Seld Chain indiriyoruz**
+**Self Chain indiriyoruz**
 ```
 cd $HOME
 mkdir -p $HOME/go/bin/
@@ -106,7 +106,7 @@ journalctl -u selfchaind -f
 ```
 
 
-**Node Tekrar Başlatıyoruz**
+**Node Sync Kontrolü**
 > Senkronize olup olmadığımızı kontrol etmek için aşağıdaki kodu kullanıyoruz. `false` çıktısı aldığımızda işlem tamamdır.
 
 ![Ekran görüntüsü 2024-02-27 163227](https://github.com/CoinHuntersTR/Self-Chain/assets/111747226/bfc7630a-09bf-45e4-9d5d-aaf0c8d39f7b)
