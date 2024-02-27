@@ -182,6 +182,6 @@ selfchaind tx checkpointing create-validator \
 ```
 
 
-**Babylon Explorer**
+**SelfChain Explorer**
 > Tüm adımları tamamladıktan sonra [BURADAN](https://explorer-devnet.selfchain.xyz/self) kendi validatorünüzü kontrol edebilirsiniz.
 
