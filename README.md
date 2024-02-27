@@ -61,23 +61,23 @@ selfchaind init NodeName --chain-id=self-dev-1
 
 **Genesis Dosyalarını indiriyoruz.**
 ```
-curl -Ls https://ss-t.babylon.nodestake.org/genesis.json > $HOME/.babylond/config/genesis.json
+curl -Ls https://ss-t.selfchain.nodestake.org/genesis.json > $HOME/.selfchain/config/genesis.json
 ```
 
 **Addrbook indiriyoruz.**
 ```
-curl -Ls https://ss-t.babylon.nodestake.org/addrbook.json > $HOME/.babylond/config/addrbook.json
+curl -Ls https://ss-t.selfchain.nodestake.org/addrbook.json > $HOME/.selfchain/config/addrbook.json
 ```
 
 **Servis Dosyasını Oluşturuyoruz.**
 ```
-sudo tee /etc/systemd/system/babylond.service > /dev/null <<EOF
+sudo tee /etc/systemd/system/selfchaind.service > /dev/null <<EOF
 [Unit]
-Description=babylond Daemon
+Description=selfchaind Daemon
 After=network-online.target
 [Service]
 User=$USER
-ExecStart=$(which babylond) start
+ExecStart=$(which selfchaind) start
 Restart=always
 RestartSec=3
 LimitNOFILE=65535
@@ -89,27 +89,31 @@ EOF
 sudo systemctl daemon-reload
 ```
 ```
-sudo systemctl enable babylond
+sudo systemctl enable selfchaind
 ```
 
-**Snapshot (Opsiyonel)**
+**Snapshot**
 ```
-SNAP_NAME=$(curl -s https://ss-t.babylon.nodestake.org/ | egrep -o ">20.*\.tar.lz4" | tr -d ">")
-curl -o - -L https://ss-t.babylon.nodestake.org/${SNAP_NAME}  | lz4 -c -d - | tar -x -C $HOME/.babylond
+SNAP_NAME=$(curl -s https://ss-t.selfchain.nodestake.org/ | egrep -o ">20.*\.tar.lz4" | tr -d ">")
+curl -o - -L https://ss-t.selfchain.nodestake.org/${SNAP_NAME}  | lz4 -c -d - | tar -x -C $HOME/.selfchain
 ```
 **Node Tekrar Başlatıyoruz**
 ```
-sudo systemctl restart babylond
+sudo systemctl restart selfchaind
 ```
 ```
-sudo journalctl -u babylond -f --no-hostname -o cat
+journalctl -u selfchaind -f
 ```
 
 
 **Node Tekrar Başlatıyoruz**
-> Senkronize olup olmadığımızı kontrol etmek için aşağıdaki kodu kullanıyoruz. `false` çıktısı aldığımızda işlem tamamdır. 
+> Senkronize olup olmadığımızı kontrol etmek için aşağıdaki kodu kullanıyoruz. `false` çıktısı aldığımızda işlem tamamdır.
+
+![Ekran görüntüsü 2024-02-27 163227](https://github.com/CoinHuntersTR/Self-Chain/assets/111747226/bfc7630a-09bf-45e4-9d5d-aaf0c8d39f7b)
+
+
 ```
-babylond status 2>&1 | jq .SyncInfo
+selfchaind status 2>&1 | jq .SyncInfo
 ```
 
 **Cüzdan Oluşturma**
@@ -120,7 +124,7 @@ babylond status 2>&1 | jq .SyncInfo
 > Size verilen gizli kelimeleri bir yere not etmeyi unutmayın! 
 
 ```
-babylond keys add Cüzdanismi
+selfchaind keys add Cüzdanismi
 ```
 
 > Eğer kullandığınız bir cüzdanı eklemek istiyorsanız. `Cüzdanismi` yazan yeri değiştirmeyi unutmayın!
@@ -133,26 +137,20 @@ babylond keys add Cüzdanismi --recvoer
 **Cüzdanda Token Değerini Görme**
 > `Cüzdanismi` yazan yeri, verdiğiniz cüzdan ismi ile değiştirin. Cüzdanınıza token gelip gelmediğini kontrol etmiş olursunuz.
 ```
-babylond q bank balances $(babylond keys show Cüzdanismi -a)
+selfchaind q bank balances $(selfchaind keys show Cüzdanismi -a)
 ```
+## Bu adımdan sonrasında Discord'a Gidiyoruz.
 
-**BLS key oluşturuyoruz.**
+> İlk olarak [BURADAN](https://discord.gg/selfchainxyz) discord kanalına gidip verify adımını yapıyoruz.
 
-> Burada `Cüzdanismi` yazan yere, cüzdana verdiğiniz ismi girin.
+> #verify-role-request kanalına gidiyoruz.
 
-> BLS keyinizi bir yere not edersiniz.
-```
-babylond create-bls-key $(babylond keys show Cüzdanismi -a)
-```
-```
-sudo systemctl restart babylond
-```
-```
-sed -i -e "s|^key-name *=.*|key-name = \"wallet\"|" $HOME/.babylond/config/app.toml
-```
-```
-sed -i -e "s|^timeout_commit *=.*|timeout_commit = \"30s\"|" $HOME/.babylond/config/config.toml
-```
+![Ekran görüntüsü 2024-02-27 164048](https://github.com/CoinHuntersTR/Self-Chain/assets/111747226/cea07184-83bb-4c88-8de0-18d99b87c7c5)
+
+> Buradaki botu çalıştırdığınızda size DM atacak.
+
+> Sizden iki bilgi istiyor. Birincisi Node ID yukarıda Node kurarken almış olmanız gerekiyor. İkincisi ise IP adresiniz. Bunları girdikten sonra rol gelmesini bekliyorsunuz. Rol geldikten sonra fauceti kullanabiliyoruz.
+
 
 **Validator Oluşturuyoruz..**
 
@@ -164,19 +162,20 @@ sed -i -e "s|^timeout_commit *=.*|timeout_commit = \"30s\"|" $HOME/.babylond/con
 
 >  `details` "" içine istediğiniz bir şey yazabilirsiniz. 
 ```
-babylond tx checkpointing create-validator \
---amount=1000000ubbn \
---pubkey=$(babylond tendermint show-validator) \
+selfchaind tx checkpointing create-validator \
+--amount=1000000000uself \
+--pubkey=$(selfchaind tendermint show-validator) \
 --moniker=MonikerName \
+--identity="" \
 --details="Coin Hunters Community" \
 --website="" \
---chain-id=bbn-test-3 \
+--chain-id=self-dev-1 \
 --commission-rate=0.10 \
---commission-max-rate=0.20 \
+--commission-max-rate=0.15 \
 --commission-max-change-rate=0.01 \
 --min-self-delegation=1 \
 --from=Cüzdanismi \
---gas-prices=0.1ubbn \
+--gas-prices=0.5uself \
 --gas-adjustment=1.5 \
 --gas=auto \
 -y
@@ -184,5 +183,5 @@ babylond tx checkpointing create-validator \
 
 
 **Babylon Explorer**
-> Tüm adımları tamamladıktan sonra [BURADAN](https://explorer.nodestake.org/babylon-testnet/staking) kendi validatorünüzü kontrol edebilirsiniz.
+> Tüm adımları tamamladıktan sonra [BURADAN](https://explorer-devnet.selfchain.xyz/self) kendi validatorünüzü kontrol edebilirsiniz.
 
