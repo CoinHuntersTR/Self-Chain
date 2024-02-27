@@ -131,7 +131,7 @@ selfchaind keys add Cüzdanismi
 
 > Sizden şifre isteyecek (2 kere aynı şifreyi giriyoruz.)
 ```
-babylond keys add Cüzdanismi --recvoer
+selfchaind keys add Cüzdanismi --recvoer
 ```
 
 **Cüzdanda Token Değerini Görme**
